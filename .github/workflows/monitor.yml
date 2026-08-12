@@ -1,0 +1,46 @@
+name: 63-16 Airtable detector - ALERT ONLY
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '*/5 6-21 * * *'
+      timezone: 'America/New_York'
+    - cron: '*/30 0-5,22-23 * * *'
+      timezone: 'America/New_York'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: reside-6316-detector
+  cancel-in-progress: false
+
+jobs:
+  monitor:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: lts/*
+      - run: npm install --no-audit --no-fund
+      - run: npx playwright install --with-deps chromium
+      - name: Check live Airtable picker
+        run: npm run monitor
+        env:
+          FORM_URL: https://airtable.com/appsseXTOVx59HC0W/pagcVengefPFQvMZC/form
+          TARGET_TEXT: 63-16 102nd Street
+          ALERT_LINK: https://airtable.com/appsseXTOVx59HC0W/pagcVengefPFQvMZC/form
+          SMTP_USER: ${{ secrets.SMTP_USER }}
+          SMTP_APP_PASSWORD: ${{ secrets.SMTP_APP_PASSWORD }}
+          ALERT_EMAIL: ${{ secrets.ALERT_EMAIL }}
+          ALERT_SMS: ${{ secrets.ALERT_SMS }}
+      - name: Upload evidence
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v7
+        with:
+          name: monitor-evidence-${{ github.run_number }}
+          path: artifacts/
+          if-no-files-found: ignore
+          retention-days: 7
