@@ -1,8 +1,13 @@
 {
   "name": "reside-6316-monitor",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
   "type": "module",
-  "scripts": {"diagnose": "node src/diagnose-airtable.mjs"},
-  "dependencies": {"playwright": "1.62.0"}
+  "scripts": {
+    "monitor": "node src/monitor-airtable.mjs"
+  },
+  "dependencies": {
+    "nodemailer": "7.0.6",
+    "playwright": "1.62.0"
+  }
 }
