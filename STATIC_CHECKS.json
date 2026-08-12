@@ -1,0 +1,9 @@
+{
+  "node_syntax_ok": true,
+  "contains_user_email": false,
+  "contains_user_phone": false,
+  "contains_user_income": false,
+  "contains_user_home_address": false,
+  "contains_known_submit_click_pattern": false,
+  "submit_is_explicitly_disabled": true
+}
