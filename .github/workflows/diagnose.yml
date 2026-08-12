@@ -1,0 +1,38 @@
+name: Airtable picker diagnostic - SAFE DRY RUN
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  diagnose:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: lts/*
+
+      - run: npm install --no-audit --no-fund
+
+      - run: npx playwright install --with-deps chromium
+
+      - name: Run SAFE diagnostic
+        run: npm run diagnose
+        env:
+          FORM_URL: https://airtable.com/appsseXTOVx59HC0W/pagcVengefPFQvMZC/form
+          TARGET_TEXT: 63-16 102nd Street
+
+      - name: Upload diagnostic evidence
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v7
+        with:
+          name: airtable-picker-diagnostic-${{ github.run_number }}
+          path: artifacts/
+          if-no-files-found: error
+          retention-days: 14
